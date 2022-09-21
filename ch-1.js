@@ -155,7 +155,7 @@ function times(a, b) {
     return times_iter(0, a, b);
 }
 
-times(12345, 12345);
+// times(12345, 12345);
 
 //------------------------------
 // listing
@@ -171,8 +171,78 @@ const gcd = (a, b) =>
 const divides = (a, b) =>
     a % b === 0;
 
-function smallest_divisor_brutforce(n) {
+function smallest_divisor(n) {
+    const find_divisor = (n, test) =>
+        n < square(test)
+        ? n
+        : divides(n, test)
+            ? test
+            : find_divisor(n, test + 1);
     
-    
-   return find_divisor(n, 2); 
+    return find_divisor(n, 2); 
 }
+
+const is_prime = (n) =>
+    n === smallest_divisor(n);
+
+// is_prime(619);
+
+const expmod = (base, exp, m) =>
+    exp === 0
+    ? 1
+    : is_even(exp)
+        ? square(expmod(base, exp / 2, m)) % m
+        : (base * expmod(base, exp - 1, m) %m);
+
+// expmod(2, 3, 3);
+
+function fermat_test(n) {
+    const try_it = (a) =>
+       expmod(a, n, n) === a;
+       
+    return try_it(1 + math_floor(math_random() * (n - 1)));
+}
+
+// fermat_test(13);
+
+const fast_is_prime = (n, times) =>
+    times === 0
+    ? false
+    : fermat_test(n)
+        ? fast_is_prime(n, times - 1)
+        : false;
+
+//------------------------------
+// 1.30
+//------------------------------
+
+function sum(from, to, fn, step_fn) {
+    const iter = (x, result) =>
+        to < x
+        ? result
+        : iter(step_fn(x), result + fn(x));
+        
+    return iter(from, 0);
+}
+
+//------------------------------
+    
+const cube = (x) =>
+    x * x * x;
+    
+    
+const inc = (n) =>
+    n + 1;
+
+const sum_cubes = (from, to) =>
+    sum(from, to, cube, inc);
+
+// sum_cubes(1, 10);
+
+const same = (x) =>
+    x;
+
+const sum_integers = (from, to) =>
+    sum(from, to, same, inc);
+    
+sum_integers(1, 10);
